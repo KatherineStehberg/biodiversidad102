@@ -11,7 +11,10 @@ const pool = new Pool({
   database: process.env.DB_NAME,    // Nombre de la base de datos (desde variable de entorno)
   password: process.env.DB_PASSWORD,// Contraseña de la base de datos
   port: process.env.PGPORT || 5432, // Puerto de PostgreSQL
-  connectionString: process.env.DB_URL // Cadena de conexión si estás usando una URL
+  connectionString: process.env.DB_URL, // Cadena de conexión si estás usando una URL
+  ssl: {
+    rejectUnauthorized: false // Esto es necesario para conectar a Render
+  }
 });
 
 // Verificar la conexión
