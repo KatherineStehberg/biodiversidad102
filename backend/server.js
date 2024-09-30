@@ -3,7 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const dotenv = require('dotenv');
-const pool = require('./db');
+const pool = require('./db'); // PostgreSQL connection
 
 dotenv.config();
 
@@ -11,70 +11,66 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ruta principal
 app.get('/', (req, res) => {
-  res.send('¡Bienvenido al backend de biodiversidad101!');
+  res.send('¡Bienvenido al backend de biodiversidad102!');
 });
 
-// Registro de usuario
+// User registration route
 app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
-
   try {
     const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (userExists.rows.length > 0) return res.status(400).json({ message: 'El usuario ya existe.' });
+    if (userExists.rows.length > 0) return res.status(400).json({ message: 'User already exists' });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const newUser = await pool.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *', [name, email, hashedPassword]);
-
-    res.status(201).json({ message: 'Usuario registrado con éxito', user: newUser.rows[0] });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = await pool.query(
+      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
+      [name, email, hashedPassword]
+    );
+    res.status(201).json({ message: 'User registered', user: newUser.rows[0] });
   } catch (error) {
-    res.status(500).json({ message: 'Error al registrar el usuario', error });
+    res.status(500).json({ message: 'Registration failed', error });
   }
 });
 
-// Inicio de sesión
+// User login route
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (user.rows.length === 0) return res.status(400).json({ message: 'Usuario no encontrado.' });
+    if (user.rows.length === 0) return res.status(400).json({ message: 'User not found' });
 
-    const validPassword = await bcrypt.compare(password, user.rows[0].password);
-    if (!validPassword) return res.status(400).json({ message: 'Contraseña incorrecta.' });
+    const isValidPassword = await bcrypt.compare(password, user.rows[0].password);
+    if (!isValidPassword) return res.status(400).json({ message: 'Invalid password' });
 
     const token = jwt.sign({ id: user.rows[0].id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ message: 'Inicio de sesión exitoso', token });
+    res.json({ message: 'Login successful', token });
   } catch (error) {
-    res.status(500).json({ message: 'Error al iniciar sesión', error });
+    res.status(500).json({ message: 'Login failed', error });
   }
 });
 
-// Middleware de verificación de token
+// Verify token middleware
 const verifyToken = (req, res, next) => {
   const token = req.header('Authorization');
-  if (!token) return res.status(401).json({ message: 'Acceso denegado' });
+  if (!token) return res.status(401).json({ message: 'Access denied' });
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
     next();
   } catch (err) {
-    res.status(400).json({ message: 'Token no válido' });
+    res.status(400).json({ message: 'Invalid token' });
   }
 };
 
-// Ruta para devolver la lista de productos
-app.get('/api/products', async (req, res) => {
+// Cart route
+app.get('/api/cart', verifyToken, async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM products');
-    res.json(result.rows);
+    const cartItems = await pool.query('SELECT * FROM cart WHERE user_id = $1', [req.user.id]);
+    res.json(cartItems.rows);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Error al obtener los productos.');
+    res.status(500).send('Error fetching cart items');
   }
 });
 
@@ -82,5 +78,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
 });
-
-
