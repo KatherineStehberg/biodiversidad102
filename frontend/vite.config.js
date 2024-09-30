@@ -5,6 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     open: true,
-    historyApiFallback: true, // Esto es importante para que las rutas funcionen en modo SPA.
+    historyApiFallback: true, // Habilitar rutas en modo SPA
+    port: 3000, // Puedes ajustar el puerto si es necesario
+  },
+  build: {
+    outDir: 'dist', // Asegúrate de que el directorio de salida sea el correcto
   },
 });
