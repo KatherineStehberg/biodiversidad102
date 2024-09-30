@@ -11,7 +11,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,    // Nombre de la base de datos (desde variable de entorno)
   password: process.env.DB_PASSWORD,// Contraseña de la base de datos
   port: process.env.PGPORT || 5432, // Puerto de PostgreSQL
-  ssl: process.env.DB_URL.includes("render") ? { rejectUnauthorized: false } : false // Solo usar SSL si la URL contiene "render"
+  ssl: false                        // Desactiva SSL completamente
 });
 
 // Verificar la conexión
