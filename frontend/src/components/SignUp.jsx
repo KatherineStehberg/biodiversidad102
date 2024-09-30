@@ -12,24 +12,58 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, formData);
-      console.log('Registration success:', response.data);
+      const response = await axios.post(`${process.env.VITE_API_URL}/api/register`, formData);
+      console.log('Registro exitoso:', response.data);
     } catch (error) {
-      console.error('Registration failed:', error);
-      setError('Error registering user');
+      console.error('Error al registrar:', error);
+      setError('Ocurrió un error al intentar registrar el usuario.');
     }
   };
 
   return (
     <div className="auth-container">
-      <h1>Sign Up</h1>
+      <h1>Registrarse</h1>
       <form onSubmit={handleSubmit}>
-        <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-        <input type="email" name="email" value={formData.email} onChange={handleChange} required />
-        <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+        <div className="form-group">
+          <label htmlFor="name">Nombre</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            placeholder="Nombre"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Correo Electrónico</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            placeholder="Correo Electrónico"
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            placeholder="Contraseña"
+            onChange={handleChange}
+            required
+          />
+        </div>
         {error && <p className="error-message">{error}</p>}
-        <button type="submit">Register</button>
+        <button type="submit">Registrarse</button>
       </form>
+      <p>¿Ya tienes una cuenta? <a href="/login">Iniciar Sesión</a></p>
     </div>
   );
 };
