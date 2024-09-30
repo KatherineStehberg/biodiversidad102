@@ -1,0 +1,65 @@
+/* Estilos para la página de servicios */
+.services-container {
+  padding: 40px;
+  background-color: #f4f7f6;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.service-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.service-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  margin: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.service-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin: 10px 0;
+  color: #2ecc71;
+}
+
+p {
+  font-size: 1rem;
+  color: #333;
+}
+
+.add-to-cart-button {
+  background-color: #27ae60;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-button:hover {
+  background-color: #2ecc71;
+  transform: scale(1.05);
+}
+
+.add-to-cart-button:active {
+  transform: scale(0.95);
+}
