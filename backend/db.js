@@ -11,16 +11,31 @@ const pool = new Pool({
   database: process.env.DB_NAME,    // Nombre de la base de datos (desde variable de entorno)
   password: process.env.DB_PASSWORD,// Contraseña de la base de datos
   port: process.env.PGPORT || 5432, // Puerto de PostgreSQL
-  connectionString: process.env.DB_URL // Cadena de conexión si estás usando una URL
+  ssl: process.env.DB_URL.includes("render") ? { rejectUnauthorized: false } : false // Solo usar SSL si la URL contiene "render"
 });
 
 // Verificar la conexión
-pool.connect((err) => {
+pool.connect((err, client, release) => {
   if (err) {
-    console.error('Error al conectar con la base de datos', err);
-  } else {
-    console.log('Conexión exitosa a la base de datos PostgreSQL');
+    console.error('Error al conectar con la base de datos:', err.stack);
+    return;
   }
+  console.log('Conexión exitosa a la base de datos PostgreSQL');
+  release(); // Liberar el cliente después de la conexión
 });
 
+// Función para probar una consulta simple
+const testConnection = async () => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    console.log('Conexión a la base de datos exitosa. Hora actual:', result.rows[0].now);
+  } catch (err) {
+    console.error('Error ejecutando la consulta:', err);
+  }
+};
+
+// Llamar a la función de prueba de conexión
+testConnection();
+
+// Exportar el pool para ser usado en otras partes de la aplicación
 module.exports = pool;
