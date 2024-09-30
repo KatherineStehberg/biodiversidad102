@@ -12,7 +12,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.VITE_API_URL}/api/register`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, formData);
       console.log('Registro exitoso:', response.data);
     } catch (error) {
       console.error('Error al registrar:', error);
