@@ -4,45 +4,47 @@ import axios from 'axios';
 const Dashboard = () => {
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/user', {
-          headers: { Authorization: token }
-        });
-        setUser(response.data);
+
+        // Hacer las solicitudes en paralelo con Promise.all
+        const [userResponse, cartResponse] = await Promise.all([
+          axios.get('http://localhost:5000/api/user', {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          axios.get('http://localhost:5000/api/cart', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
+
+        setUser(userResponse.data);
+        setCart(cartResponse.data);
       } catch (error) {
-        console.error('Error al obtener el perfil del usuario:', error);
+        console.error('Error al obtener los datos del usuario o carrito:', error);
+        setError('Hubo un problema al cargar tus datos. Intenta nuevamente más tarde.');
       }
     };
 
-    const fetchCart = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:5000/api/cart', {
-          headers: { Authorization: token }
-        });
-        setCart(response.data);
-      } catch (error) {
-        console.error('Error al obtener el carrito:', error);
-      }
-    };
-
-    fetchUserData();
-    fetchCart();
+    fetchData();
   }, []);
 
   return (
     <div className="dashboard-container">
       <h1>Perfil del Usuario</h1>
-      {user && (
+      {error && <p className="error-message">{error}</p>}
+      {user ? (
         <div>
           <p>Nombre: {user.name}</p>
           <p>Correo Electrónico: {user.email}</p>
         </div>
+      ) : (
+        <p>Cargando datos del usuario...</p>
       )}
+
       <h2>Carrito de Compras</h2>
       {cart.length > 0 ? (
         <ul>
