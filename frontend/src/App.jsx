@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FeaturedProducts from './components/FeaturedProducts';
@@ -64,32 +64,27 @@ const App = () => {
 
       <main>
         <Routes>
-          {/* Define a home route */}
-          <Route path="/" element={<Navigate to="/products" />} /> {/* Redirects to /products */}
-          <Route path="/products" element={<Products addToCart={addToCart} />} /> {/* Pasar función para agregar productos */}
-          <Route path="/services" element={<Services addToCart={addToCart} />} /> {/* Pasar función para agregar servicios */}
+          {/* Define la ruta de inicio que muestra los productos destacados */}
+          <Route
+            path="/"
+            element={
+              <>
+                <FeaturedProducts addToCart={addToCart} />
+                <FeaturedServices addToCart={addToCart} />
+              </>
+            }
+          />
+          {/* Rutas principales */}
+          <Route path="/products" element={<Products addToCart={addToCart} />} />
+          <Route path="/services" element={<Services addToCart={addToCart} />} />
           <Route path="/about" element={<About />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<SignUp />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/cart" element={<Cart cartItems={cart} />} /> {/* Ruta para ver el carrito */}
+          <Route path="/cart" element={<Cart cartItems={cart} />} />
         </Routes>
-
-        <section className="featured-section">
-          <h2>Productos Destacados</h2>
-          <div className="featured-products-container">
-            <FeaturedProducts addToCart={addToCart} />
-          </div>
-        </section>
-
-        <section className="featured-section">
-          <h2>Servicios Destacados</h2>
-          <div className="featured-services-container">
-            <FeaturedServices addToCart={addToCart} />
-          </div>
-        </section>
       </main>
 
       <Footer />
