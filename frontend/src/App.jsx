@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FeaturedProducts from './components/FeaturedProducts';
@@ -37,7 +37,6 @@ const App = () => {
   return (
     <Router>
       <header>
-
         <Navbar cartItems={cart.length} /> {/* Pasar el número de items en el carrito */}
       </header>
 
@@ -65,6 +64,8 @@ const App = () => {
 
       <main>
         <Routes>
+          {/* Define a home route */}
+          <Route path="/" element={<Navigate to="/products" />} /> {/* Redirects to /products */}
           <Route path="/products" element={<Products addToCart={addToCart} />} /> {/* Pasar función para agregar productos */}
           <Route path="/services" element={<Services addToCart={addToCart} />} /> {/* Pasar función para agregar servicios */}
           <Route path="/about" element={<About />} />
@@ -97,4 +98,3 @@ const App = () => {
 };
 
 export default App;
-
