@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';  // Importa useNavigate para la redirección
 
 const SignUp = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState(null);
+  const navigate = useNavigate();  // Inicializa useNavigate
 
+  // Función para manejar el cambio de los inputs del formulario
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Función para manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/register`, formData);
       console.log('Registro exitoso:', response.data);
+
+      // Redirigir al usuario a la página de login después del registro
+      navigate('/login');
     } catch (error) {
       console.error('Error al registrar:', error);
       setError('Ocurrió un error al intentar registrar el usuario.');
@@ -34,6 +41,7 @@ const SignUp = () => {
             placeholder="Nombre"
             onChange={handleChange}
             required
+            autoComplete="name"  // Atributo autocomplete añadido
           />
         </div>
         <div className="form-group">
@@ -46,6 +54,7 @@ const SignUp = () => {
             placeholder="Correo Electrónico"
             onChange={handleChange}
             required
+            autoComplete="email"  // Atributo autocomplete añadido
           />
         </div>
         <div className="form-group">
@@ -58,6 +67,7 @@ const SignUp = () => {
             placeholder="Contraseña"
             onChange={handleChange}
             required
+            autoComplete="new-password"  // Atributo autocomplete añadido
           />
         </div>
         {error && <p className="error-message">{error}</p>}
