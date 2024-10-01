@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';  // Importa useNavigate
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
+  const navigate = useNavigate();  // Inicializa useNavigate
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,11 +14,17 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/login', formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/login`, formData);
       console.log('Inicio de sesión exitoso:', response.data);
+      
+      // Guardar token JWT en el almacenamiento local o cookies
+      localStorage.setItem('token', response.data.token);
+
+      // Redirigir al Dashboard
+      navigate('/dashboard');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      setError('Correo o contraseña incorrectos.');
+      setError('Usuario o contraseña incorrectos.');
     }
   };
 
@@ -27,34 +32,13 @@ const Login = () => {
     <div className="auth-container">
       <h1>Iniciar Sesión</h1>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Correo Electrónico</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {error && <p className="error-message">{error}</p>}
+        {/* Formulario de login como lo tienes */}
         <button type="submit">Iniciar Sesión</button>
       </form>
-      <p>¿No tienes una cuenta? <a href="/register">Registrarse</a></p>
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
 
 export default Login;
+
