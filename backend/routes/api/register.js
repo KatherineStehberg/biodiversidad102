@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const pool = require('../db'); // Asegúrate de tener configurada tu conexión a PostgreSQL
+const pool = require('../../db'); // Asegúrate de tener configurada tu conexión a PostgreSQL
 const router = express.Router();
 
 // Ruta para registrar usuarios
